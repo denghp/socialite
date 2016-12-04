@@ -82,10 +82,11 @@ class WeChatProvider extends AbstractProvider implements ProviderInterface
     /**
      * {@inheritdoc}.
      */
-    protected function getTokenUrl()
+    public function getTokenUrl()
     {
         return $this->baseUrl.'/oauth2/access_token';
     }
+
 
     /**
      * {@inheritdoc}.
@@ -146,6 +147,28 @@ class WeChatProvider extends AbstractProvider implements ProviderInterface
         ]);
 
         return $this->parseAccessToken($response->getBody()->getContents());
+    }
+
+    /**
+     * @param $code
+     * @return AccessToken new AccessToken(['access_token'=>$access_token,'openid'=>$openid]);
+     * @throws AuthorizeFailedException
+     */
+    public function getAccessTokenNew($code)
+    {
+        $response = $this->getHttpClient()->get($this->getTokenUrl(), [
+            'query' => $this->getTokenFields($code),
+        ]);
+        $body = $response->getBody();
+        if (!is_array($body)) {
+            $body = json_decode($body, true);
+        }
+
+        if (empty($body['access_token'])) {
+            throw new AuthorizeFailedException('Authorize Failed: '.json_encode($body, JSON_UNESCAPED_UNICODE), $body);
+        }
+
+        return new AccessToken([$body['access_token'],$body['openid']]);
     }
 
     /**
