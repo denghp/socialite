@@ -195,8 +195,7 @@ class WeChatProvider extends AbstractProvider implements ProviderInterface
         if (empty($body['access_token'])) {
             throw new AuthorizeFailedException('Authorize Failed: '.json_encode($body, JSON_UNESCAPED_UNICODE), $body);
         }
-
-        return new AccessToken([$body['access_token'],$body['openid']]);
+        return new AccessToken(['access_token'=>$body['access_token'],'openid'=>$body['openid']]);
     }
 
     /**
