@@ -48,7 +48,7 @@ trait AttributeTrait
      * Set extra attributes.
      *
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return $this
      */
@@ -68,7 +68,11 @@ trait AttributeTrait
      */
     public function merge(array $attributes)
     {
-        $this->attributes = array_merge($this->attributes, $attributes);
+        if ($this->attributes) {
+            $this->attributes = array_merge($this->attributes, $attributes);
+        } else {
+            $this->attributes = $attributes;
+        }
 
         return $this;
     }
